@@ -3,10 +3,12 @@
 This extension starts and stops the Parallels MCP server directly from VS Code.
 
 ## Commands
+
 - **Parallels MCP: Start Server** (`parallelsMcp.startServer`)
 - **Parallels MCP: Stop Server** (`parallelsMcp.stopServer`)
 
 ## Development
+
 1. Install dependencies:
    ```bash
    cd vscode-extension

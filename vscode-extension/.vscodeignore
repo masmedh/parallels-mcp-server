@@ -2,7 +2,11 @@
 .vscode
 src
 **/*.ts
-node_modules/.bin
-.vscode-test
+**/*.map
 **/tsconfig.json
 **/.eslintrc*
+node_modules
+../node_modules
+../../node_modules
+
+

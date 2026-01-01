@@ -2,9 +2,13 @@
   "name": "parallels-mcp-extension",
   "displayName": "Parallels MCP Server",
   "description": "Run the Parallels MCP server from VS Code and manage Parallels Desktop VMs via MCP tools.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "masmedh",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/masmedh/parallels-mcp-server.git"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -46,8 +50,9 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "parallels-mcp-server": "file:.."
   },
+  "bundledDependencies": [
+  ],
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.85.0",

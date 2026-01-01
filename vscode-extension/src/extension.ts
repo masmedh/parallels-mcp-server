@@ -6,8 +6,8 @@ let serverProcess: ChildProcess | undefined;
 const output = vscode.window.createOutputChannel('Parallels MCP Server');
 
 function resolveServerEntry(): string {
-  const pkgPath = require.resolve('parallels-mcp-server/package.json');
-  return path.join(path.dirname(pkgPath), 'build', 'index.js');
+  // Use the bundled server from the extension
+  return path.join(__dirname, '..', 'server', 'index.js');
 }
 
 async function startServer(): Promise<void> {
