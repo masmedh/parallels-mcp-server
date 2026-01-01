@@ -2,7 +2,7 @@
   "name": "parallels-mcp-extension",
   "displayName": "Parallels MCP Server",
   "description": "Run the Parallels MCP server from VS Code and manage Parallels Desktop VMs via MCP tools.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "maslabs",
   "license": "MIT",
   "icon": "icon.png",
