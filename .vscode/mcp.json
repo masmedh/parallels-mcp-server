@@ -3,7 +3,7 @@
   "mcpServers": {
     "parallels_mcp": {
       "command": "node",
-      "args": ["/Users/masoodahamed/Software_playground/100-parallelmcpserver/build/index.js"]
+      "args": ["${workspaceFolder}/build/index.js"]
     }
   }
 }
