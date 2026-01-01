@@ -1,0 +1,35 @@
+{
+  "name": "parallels-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Parallels Desktop VM management",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "parallels-mcp-server": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc && chmod 755 build/index.js",
+    "dev": "tsx src/index.ts",
+    "start": "node build/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "parallels",
+    "vm",
+    "virtual-machine"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "files": [
+    "build"
+  ]
+}

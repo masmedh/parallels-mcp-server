@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "parallels": {
+      "command": "node",
+      "args": ["/Users/masoodahamed/Software_playground/100-parallelmcpserver/build/index.js"]
+    }
+  }
+}
