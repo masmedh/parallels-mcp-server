@@ -5,18 +5,18 @@ import * as path from 'path';
 let serverProcess: ChildProcess | undefined;
 const output = vscode.window.createOutputChannel('Parallels MCP Server');
 
-function resolveServerEntry(): string {
+function resolveServerEntry(context: vscode.ExtensionContext): string {
   // Use the bundled server from the extension
-  return path.join(__dirname, '..', 'server', 'index.js');
+  return path.join(context.extensionPath, 'server', 'index.js');
 }
 
-async function startServer(): Promise<void> {
+async function startServer(context: vscode.ExtensionContext): Promise<void> {
   if (serverProcess) {
     vscode.window.showInformationMessage('Parallels MCP server is already running.');
     return;
   }
 
-  const entry = resolveServerEntry();
+  const entry = resolveServerEntry(context);
   const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
   output.appendLine(`Starting Parallels MCP server from ${entry}`);
@@ -54,11 +54,11 @@ async function stopServer(): Promise<void> {
   vscode.window.showInformationMessage('Parallels MCP server stopped.');
 }
 
-async function restartServer(): Promise<void> {
+async function restartServer(context: vscode.ExtensionContext): Promise<void> {
   if (serverProcess) {
     await stopServer();
   }
-  await startServer();
+  await startServer(context);
 }
 
 async function showStatus(): Promise<void> {
@@ -70,16 +70,24 @@ async function showStatus(): Promise<void> {
 }
 
 export function activate(context: vscode.ExtensionContext): void {
+  console.log('Parallels MCP Extension: Activating...');
+  output.show();
+  output.appendLine('=== Parallels MCP Extension Activated ===');
+  output.appendLine(`Extension path: ${context.extensionPath}`);
+  
   context.subscriptions.push(
-    vscode.commands.registerCommand('parallelsMcp.startServer', startServer),
+    vscode.commands.registerCommand('parallelsMcp.startServer', () => startServer(context)),
     vscode.commands.registerCommand('parallelsMcp.stopServer', stopServer),
-    vscode.commands.registerCommand('parallelsMcp.restartServer', restartServer),
+    vscode.commands.registerCommand('parallelsMcp.restartServer', () => restartServer(context)),
     vscode.commands.registerCommand('parallelsMcp.serverStatus', showStatus),
     output
   );
 
+  output.appendLine('Commands registered successfully');
+  
   // Auto-start on extension activation
-  startServer().catch((err) => {
+  output.appendLine('Auto-starting server...');
+  startServer(context).catch((err) => {
     output.appendLine(`Failed to start Parallels MCP server: ${err instanceof Error ? err.message : String(err)}`);
   });
 }
