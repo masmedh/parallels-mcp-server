@@ -1,0 +1,8 @@
+.git
+.vscode
+src
+**/*.ts
+node_modules/.bin
+.vscode-test
+**/tsconfig.json
+**/.eslintrc*

@@ -1,0 +1,46 @@
+{
+  "name": "parallels-mcp-extension",
+  "displayName": "Parallels MCP Server",
+  "description": "Run the Parallels MCP server from VS Code and manage Parallels Desktop VMs via MCP tools.",
+  "version": "0.0.1",
+  "publisher": "masmedh",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:parallelsMcp.startServer",
+    "onCommand:parallelsMcp.stopServer"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "parallelsMcp.startServer",
+        "title": "Parallels MCP: Start Server"
+      },
+      {
+        "command": "parallelsMcp.stopServer",
+        "title": "Parallels MCP: Stop Server"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "parallels-mcp-server": "file:.."
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.7.2",
+    "@vscode/vsce": "^2.29.0"
+  }
+}

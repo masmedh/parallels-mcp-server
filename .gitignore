@@ -4,3 +4,6 @@ build/
 .DS_Store
 .env
 PUBLICATION_CHECKLIST.md
+vscode-extension/node_modules/
+vscode-extension/dist/
+*.vsix
