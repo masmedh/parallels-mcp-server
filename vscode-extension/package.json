@@ -12,8 +12,11 @@
     "Other"
   ],
   "activationEvents": [
+    "onStartupFinished",
     "onCommand:parallelsMcp.startServer",
-    "onCommand:parallelsMcp.stopServer"
+    "onCommand:parallelsMcp.stopServer",
+    "onCommand:parallelsMcp.restartServer",
+    "onCommand:parallelsMcp.serverStatus"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -25,6 +28,14 @@
       {
         "command": "parallelsMcp.stopServer",
         "title": "Parallels MCP: Stop Server"
+      },
+      {
+        "command": "parallelsMcp.restartServer",
+        "title": "Parallels MCP: Restart Server"
+      },
+      {
+        "command": "parallelsMcp.serverStatus",
+        "title": "Parallels MCP: Show Server Status"
       }
     ]
   },

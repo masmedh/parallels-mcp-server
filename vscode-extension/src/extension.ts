@@ -54,12 +54,34 @@ async function stopServer(): Promise<void> {
   vscode.window.showInformationMessage('Parallels MCP server stopped.');
 }
 
+async function restartServer(): Promise<void> {
+  if (serverProcess) {
+    await stopServer();
+  }
+  await startServer();
+}
+
+async function showStatus(): Promise<void> {
+  if (serverProcess?.pid) {
+    vscode.window.showInformationMessage(`Parallels MCP server is running (pid: ${serverProcess.pid}).`);
+  } else {
+    vscode.window.showInformationMessage('Parallels MCP server is not running.');
+  }
+}
+
 export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand('parallelsMcp.startServer', startServer),
     vscode.commands.registerCommand('parallelsMcp.stopServer', stopServer),
+    vscode.commands.registerCommand('parallelsMcp.restartServer', restartServer),
+    vscode.commands.registerCommand('parallelsMcp.serverStatus', showStatus),
     output
   );
+
+  // Auto-start on extension activation
+  startServer().catch((err) => {
+    output.appendLine(`Failed to start Parallels MCP server: ${err instanceof Error ? err.message : String(err)}`);
+  });
 }
 
 export function deactivate(): void {
