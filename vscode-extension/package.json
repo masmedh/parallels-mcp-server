@@ -5,6 +5,7 @@
   "version": "0.1.2",
   "publisher": "maslabs",
   "license": "MIT",
+  "icon": "icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/masmedh/parallels-mcp-server.git"
