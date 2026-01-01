@@ -11,6 +11,22 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { execSync } from 'child_process';
+import { z } from 'zod';
+
+// Validation schemas
+const VmNameSchema = z.object({
+  vm: z.string().min(1, 'VM name cannot be empty'),
+});
+
+const StopVmSchema = z.object({
+  vm: z.string().min(1, 'VM name cannot be empty'),
+  force: z.boolean().optional(),
+});
+
+const ExecVmCommandSchema = z.object({
+  vm: z.string().min(1, 'VM name cannot be empty'),
+  command: z.string().min(1, 'Command cannot be empty'),
+});
 
 // Helper function to execute prlctl commands
 function executePrlctl(args: string[]): string {
@@ -21,7 +37,8 @@ function executePrlctl(args: string[]): string {
     });
     return result.trim();
   } catch (error: any) {
-    throw new Error(`Parallels command failed: ${error.message}`);
+    const errorMessage = error.stderr?.toString() || error.message || 'Unknown error occurred';
+    throw new Error(`Parallels command failed: ${errorMessage}`);
   }
 }
 
@@ -210,8 +227,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_vm_info': {
-        const vm = args?.vm as string;
-        const output = executePrlctl(['list', vm, '-i']);
+        const validated = VmNameSchema.parse(args);
+        const output = executePrlctl(['list', validated.vm, '-i']);
         const info = parseVmInfo(output);
         return {
           content: [{
@@ -222,68 +239,68 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'start_vm': {
-        const vm = args?.vm as string;
-        const output = executePrlctl(['start', vm]);
+        const validated = VmNameSchema.parse(args);
+        const output = executePrlctl(['start', validated.vm]);
         return {
           content: [{
             type: 'text',
-            text: `VM started successfully: ${output}`,
+            text: `VM '${validated.vm}' started successfully${output ? ': ' + output : ''}`,
           }],
         };
       }
 
       case 'stop_vm': {
-        const vm = args?.vm as string;
-        const force = args?.force as boolean;
-        const cmdArgs = ['stop', vm];
-        if (force) {
+        const validated = StopVmSchema.parse(args);
+        const cmdArgs = ['stop', validated.vm];
+        if (validated.force) {
           cmdArgs.push('--kill');
         }
         const output = executePrlctl(cmdArgs);
+        const method = validated.force ? 'force stopped' : 'stopped';
         return {
           content: [{
             type: 'text',
-            text: `VM stopped successfully: ${output}`,
+            text: `VM '${validated.vm}' ${method} successfully${output ? ': ' + output : ''}`,
           }],
         };
       }
 
       case 'suspend_vm': {
-        const vm = args?.vm as string;
-        const output = executePrlctl(['suspend', vm]);
+        const validated = VmNameSchema.parse(args);
+        const output = executePrlctl(['suspend', validated.vm]);
         return {
           content: [{
             type: 'text',
-            text: `VM suspended successfully: ${output}`,
+            text: `VM '${validated.vm}' suspended successfully${output ? ': ' + output : ''}`,
           }],
         };
       }
 
       case 'resume_vm': {
-        const vm = args?.vm as string;
-        const output = executePrlctl(['resume', vm]);
+        const validated = VmNameSchema.parse(args);
+        const output = executePrlctl(['resume', validated.vm]);
         return {
           content: [{
             type: 'text',
-            text: `VM resumed successfully: ${output}`,
+            text: `VM '${validated.vm}' resumed successfully${output ? ': ' + output : ''}`,
           }],
         };
       }
 
       case 'reset_vm': {
-        const vm = args?.vm as string;
-        const output = executePrlctl(['reset', vm]);
+        const validated = VmNameSchema.parse(args);
+        const output = executePrlctl(['reset', validated.vm]);
         return {
           content: [{
             type: 'text',
-            text: `VM reset successfully: ${output}`,
+            text: `VM '${validated.vm}' reset successfully${output ? ': ' + output : ''}`,
           }],
         };
       }
 
       case 'get_vm_status': {
-        const vm = args?.vm as string;
-        const output = executePrlctl(['status', vm]);
+        const validated = VmNameSchema.parse(args);
+        const output = executePrlctl(['status', validated.vm]);
         return {
           content: [{
             type: 'text',
@@ -293,13 +310,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'exec_vm_command': {
-        const vm = args?.vm as string;
-        const command = args?.command as string;
-        const output = executePrlctl(['exec', vm, command]);
+        const validated = ExecVmCommandSchema.parse(args);
+        const output = executePrlctl(['exec', validated.vm, validated.command]);
         return {
           content: [{
             type: 'text',
-            text: output,
+            text: output || '(command executed successfully with no output)',
           }],
         };
       }
@@ -308,6 +324,18 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         throw new Error(`Unknown tool: ${name}`);
     }
   } catch (error: any) {
+    // Check if it's a Zod validation error
+    if (error instanceof z.ZodError) {
+      const issues = error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`).join(', ');
+      return {
+        content: [{
+          type: 'text',
+          text: `Validation error: ${issues}`,
+        }],
+        isError: true,
+      };
+    }
+    
     return {
       content: [{
         type: 'text',

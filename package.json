@@ -1,7 +1,7 @@
 {
   "name": "parallels-mcp-server",
   "version": "1.0.0",
-  "description": "MCP server for Parallels Desktop VM management",
+  "description": "Model Context Protocol (MCP) server for managing Parallels Desktop virtual machines. Provides tools to list, start, stop, suspend, resume, reset VMs and execute commands inside them.",
   "type": "module",
   "main": "build/index.js",
   "bin": {
@@ -10,16 +10,32 @@
   "scripts": {
     "build": "tsc && chmod 755 build/index.js",
     "dev": "tsx src/index.ts",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   },
   "keywords": [
     "mcp",
     "parallels",
     "vm",
-    "virtual-machine"
+    "virtual-machine",
+    "parallels-desktop",
+    "model-context-protocol",
+    "mcp-server"
   ],
-  "author": "",
+  "author": "Masoodh Ahamed <masmedhprogram@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/parallels-mcp-server.git"
+  },
+  "homepage": "https://github.com/yourusername/parallels-mcp-server#readme",
+  "bugs": {
+    "url": "https://github.com/yourusername/parallels-mcp-server/issues"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
     "zod": "^3.23.8"
@@ -30,6 +46,12 @@
     "typescript": "^5.7.2"
   },
   "files": [
-    "build"
+    "build",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "os": [
+    "darwin"
   ]
 }

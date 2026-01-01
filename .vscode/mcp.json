@@ -1,6 +1,7 @@
 {
+  "$schema": "./mcp.schema.json",
   "mcpServers": {
-    "parallels": {
+    "parallels_mcp": {
       "command": "node",
       "args": ["/Users/masoodahamed/Software_playground/100-parallelmcpserver/build/index.js"]
     }

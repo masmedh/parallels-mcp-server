@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MCP Server Configuration",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" },
+    "mcpServers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "command": { "type": "string" },
+          "args": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["command"],
+        "additionalProperties": true
+      }
+    }
+  },
+  "required": ["mcpServers"],
+  "additionalProperties": false
+}
