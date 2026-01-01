@@ -70,11 +70,6 @@ async function showStatus(): Promise<void> {
 }
 
 export function activate(context: vscode.ExtensionContext): void {
-  console.log('Parallels MCP Extension: Activating...');
-  output.show();
-  output.appendLine('=== Parallels MCP Extension Activated ===');
-  output.appendLine(`Extension path: ${context.extensionPath}`);
-  
   context.subscriptions.push(
     vscode.commands.registerCommand('parallelsMcp.startServer', () => startServer(context)),
     vscode.commands.registerCommand('parallelsMcp.stopServer', stopServer),
@@ -82,11 +77,8 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand('parallelsMcp.serverStatus', showStatus),
     output
   );
-
-  output.appendLine('Commands registered successfully');
   
   // Auto-start on extension activation
-  output.appendLine('Auto-starting server...');
   startServer(context).catch((err) => {
     output.appendLine(`Failed to start Parallels MCP server: ${err instanceof Error ? err.message : String(err)}`);
   });
