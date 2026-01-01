@@ -29,9 +29,10 @@ const ExecVmCommandSchema = z.object({
 });
 
 // Helper function to execute prlctl commands
-function executePrlctl(args: string[]): string {
+function executePrlctl(command: string, ...args: string[]): string {
   try {
-    const result = execSync(`prlctl ${args.join(' ')}`, {
+    const fullCommand = ['prlctl', command, ...args].filter(arg => arg.length > 0).join(' ');
+    const result = execSync(fullCommand, {
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe']
     });
@@ -217,7 +218,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     switch (name) {
       case 'list_vms': {
-        const output = executePrlctl(['list', '-a']);
+        const output = executePrlctl('list', '-a');
         return {
           content: [{
             type: 'text',
@@ -228,7 +229,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'get_vm_info': {
         const validated = VmNameSchema.parse(args);
-        const output = executePrlctl(['list', validated.vm, '-i']);
+        const output = executePrlctl('list', validated.vm, '-i');
         const info = parseVmInfo(output);
         return {
           content: [{
@@ -240,7 +241,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'start_vm': {
         const validated = VmNameSchema.parse(args);
-        const output = executePrlctl(['start', validated.vm]);
+        const output = executePrlctl('start', validated.vm);
         return {
           content: [{
             type: 'text',
@@ -251,11 +252,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'stop_vm': {
         const validated = StopVmSchema.parse(args);
-        const cmdArgs = ['stop', validated.vm];
-        if (validated.force) {
-          cmdArgs.push('--kill');
-        }
-        const output = executePrlctl(cmdArgs);
+        const forceFlag = validated.force ? '--kill' : '';
+        const output = executePrlctl('stop', validated.vm, forceFlag);
         const method = validated.force ? 'force stopped' : 'stopped';
         return {
           content: [{
@@ -267,7 +265,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'suspend_vm': {
         const validated = VmNameSchema.parse(args);
-        const output = executePrlctl(['suspend', validated.vm]);
+        const output = executePrlctl('suspend', validated.vm);
         return {
           content: [{
             type: 'text',
@@ -278,7 +276,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'resume_vm': {
         const validated = VmNameSchema.parse(args);
-        const output = executePrlctl(['resume', validated.vm]);
+        const output = executePrlctl('resume', validated.vm);
         return {
           content: [{
             type: 'text',
@@ -289,7 +287,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'reset_vm': {
         const validated = VmNameSchema.parse(args);
-        const output = executePrlctl(['reset', validated.vm]);
+        const output = executePrlctl('reset', validated.vm);
         return {
           content: [{
             type: 'text',
@@ -300,7 +298,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'get_vm_status': {
         const validated = VmNameSchema.parse(args);
-        const output = executePrlctl(['status', validated.vm]);
+        const output = executePrlctl('status', validated.vm);
         return {
           content: [{
             type: 'text',
@@ -311,7 +309,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'exec_vm_command': {
         const validated = ExecVmCommandSchema.parse(args);
-        const output = executePrlctl(['exec', validated.vm, validated.command]);
+        const output = executePrlctl('exec', validated.vm, validated.command);
         return {
           content: [{
             type: 'text',
